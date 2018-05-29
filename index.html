@@ -13,14 +13,18 @@
     <script src="main.js"></script>
     <script>
 
-    const congfig = {
-        userName: 'germangamboa95', // Github user name.
-        dailyGoal: 5, // Daily commit goal. 
-        el: 'remindMe-hook' // HTML element where to render widget
+        const congfig = {
+            userName: 'germangamboa95', // Github user name.
+            goals: {
+                dailyGoal: 5, // Daily commit goal.
+                weeklyGoal: 35,
+                yearlyGoal: 100
+            },
+            el: 'remindMe-hook' // HTML element where to render widget
 
-    }
-    remindMe.init(congfig);
-    
+        }
+        remindMe.init(congfig);
+
     </script>
 </body>
 

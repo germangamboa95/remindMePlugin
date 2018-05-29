@@ -1,31 +1,39 @@
 
-const remindMe = (function() {
-  const dayLen = 86400000;
-  const _dayLen = 86400000;
+const remindMe = (function () {
+
+  const times = {
+    dailyGoal:  86400000,
+    weeklyGoal: 604800000,
+    monthlyGoal: 2592000000,
+    yearlyGoal: 31556952000
+  }
+
   const _currDate = Date.now();
   const baseUrl = "https://api.github.com/users/";
   const _data = {
     config: {},
     raw_data: [],
     cleaned_data: [],
-    metrics: {}
+    metrics: []
   };
 
-  const _getLast24hrs = data =>
+
+
+  const _getLastXhrs = (data, hrs) =>
     data
       .map(event => Date.parse(event.created_at))
-      .filter(item => _currDate - item < _dayLen);
+      .filter(item => _currDate - item < hrs);
 
 
 
-  const _drawRes = () => { 
-    const hook = document.querySelector('#'+_data.config.el);
-    const el = document.createElement('ul'); 
-    el.innerHTML = 
-    `
-    <li>You Current Goal is: ${_data.config.dailyGoal}</li>
-    <li>So far you have hit: ${_data.metrics.percentage_daily}% of your goal.</li>
-    `;
+  const _drawRes = () => {
+    const hook = document.querySelector('#' + _data.config.el);
+    const el = document.createElement('ul');
+    _data.cleaned_data.forEach((item, index) => {
+      const key = Object.keys(item).toString();
+      // Regex expression using lookahead and lookbehind. 
+      el.innerHTML += `<li>Your ${key.split(/(?<=[a-z])(?=[A-Z])/).join(' ').toLowerCase()} is ${_data.metrics[index]}% Complete!</li>`
+    })
 
     hook.appendChild(el);
   }
@@ -38,20 +46,32 @@ const remindMe = (function() {
         .catch(err => reject(err));
     });
 
-    _data.cleaned_data = _getLast24hrs(_data.raw_data);
-    _data.metrics.percentage_daily = (_data.cleaned_data.length / _data.config.dailyGoal) * 100;
+    for (let item in _data.config.goals) {
+      _data.cleaned_data.push(
+        { [item] : _getLastXhrs(_data.raw_data, times[item])}
+      );
+    }
+
+    console.log(_data);
+
+    _data.metrics = _data.cleaned_data.map(item => {
+      const key = Object.keys(item)
+      return (item[key].length / _data.config.goals[key] * 100).toFixed(2)
+    });
+
     _drawRes();
   };
 
   const init = data => {
     //  Throw Err if config object is not passed in. 
     try {
-      if(!data) throw new ReferenceError('config object cannot be null');
+      if (!data) throw new ReferenceError('config object cannot be null');
       _data.config = data;
+
       _crunchData();
     }
 
-    catch(err){
+    catch (err) {
       console.log(err)
     }
 
