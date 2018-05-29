@@ -22,3 +22,5 @@ Initialize plug-in with config object:
 - [ ] Be able to track Daily, Weekly, Monthly and Yearly Goals.
 - [ ] Add styling hooks to the widget. 
 - [ ] Add option to display results as progress bars.
+
+4d59cf1624d7d81d4c8493bdd3b0a9391391db3b

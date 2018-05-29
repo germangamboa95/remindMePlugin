@@ -44,8 +44,17 @@ const remindMe = (function() {
   };
 
   const init = data => {
-    _data.config = data;
-    _crunchData();
+    //  Throw Err if config object is not passed in. 
+    try {
+      if(!data) throw new ReferenceError('config object cannot be null');
+      _data.config = data;
+      _crunchData();
+    }
+
+    catch(err){
+      console.log(err)
+    }
+
   };
 
   return {
